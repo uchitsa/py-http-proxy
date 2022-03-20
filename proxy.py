@@ -1,14 +1,28 @@
 import requests
-import Flask
+from flask import Flask, Response, request, current_app
 import argparse
 
 
 def create_app():
     app = Flask(__name__)
-    requests.Session
 
     @app.route("/", defaults={"uri_path": ""}, methods=["GET"])
     def default(uri_path):
+        if not uri_path.startswith("/"):
+            uri_path = "/" + uri_path
+        else:
+            uri_path = "/"
+
+        url = "https://thehackernews.com" + uri_path
+        headers = dict(request.headers.items())
+        headers.pop("Host", None)
+
+        req = requests.Session().get(url, headers=headers)
+        current_app.logger.info("%s %s - %s", url, req, req.elapsed.total_seconds())
+        response_headers = dict(req.headers.items())
+        exclude_headers = ('Content-Encoding', 'Transfer-Encoding', 'Content-Length', 'P3P', 'Public-Key-Pins',
+                           'Connection', 'Keep-Alive')
+
         return Response()
 
     return app
