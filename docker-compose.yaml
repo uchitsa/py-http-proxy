@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./:/app
+    ports:
+      - "8232:8232"
+    command: python proxy.py
+
